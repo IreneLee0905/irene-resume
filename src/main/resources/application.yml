@@ -1,0 +1,14 @@
+server:
+  port: 8000
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: POSTGRESQL
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/resume
+    username: postgres
+    password: p@ssw0rd
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
