@@ -40,7 +40,7 @@ public class controller {
 
     Customer customer = customerService.loginWithAccount(account, password).orElse(null);
     if (ObjectUtils.isEmpty(customer)) {
-      return new ResponseBuilder<>().badRequest();
+      return new ResponseBuilder<>().status(HttpStatus.UNAUTHORIZED).message("login failure ").build();
     } else {
       return new ResponseBuilder<>().ok(customer);
     }
@@ -51,6 +51,7 @@ public class controller {
   public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
 
     try {
+
 
       return new ResponseBuilder<Customer>()
           .ok(customerService.addCustomer(customer));
