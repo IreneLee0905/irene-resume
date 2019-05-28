@@ -4,13 +4,13 @@ import irene.entity.Customer;
 import irene.service.CustomerService;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,11 +37,15 @@ public class controller {
   // TODO fix the cross origin annotation, put it into config profile or bean
   @CrossOrigin
   @PostMapping("/login")
-  public ResponseEntity<Customer> login(@RequestParam String account, @RequestParam String password) {
+  public ResponseEntity<Customer> login(
+      @RequestParam String account, @RequestParam String password) {
 
     Customer customer = customerService.loginWithAccount(account, password).orElse(null);
     if (ObjectUtils.isEmpty(customer)) {
-      return new ResponseBuilder<>().status(HttpStatus.UNAUTHORIZED).message("login failure ").build();
+      return new ResponseBuilder<>()
+          .status(HttpStatus.UNAUTHORIZED)
+          .message("login failure ")
+          .build();
     } else {
       return new ResponseBuilder<>().ok(customer);
     }
@@ -51,17 +55,12 @@ public class controller {
   @PostMapping("/customer-add")
   public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
 
-    try {
-
-
-      return new ResponseBuilder<Customer>()
-          .ok(customerService.addCustomer(customer));
-
-    } catch (Exception e) {
-      log.error("unexpected error occur when saving customer into database :{}", e);
-      return new ResponseBuilder<>().badRequest(e.getMessage());
+    Optional<Customer> optional = customerService.addCustomer(customer);
+    if (optional.isPresent()) {
+      return new ResponseBuilder<>().ok(optional.get());
+    } else {
+      return new ResponseBuilder<>()
+          .badRequest("The account is already exist, please try to use other account");
     }
   }
-
-
 }
