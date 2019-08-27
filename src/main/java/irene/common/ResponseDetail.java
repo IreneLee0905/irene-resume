@@ -1,8 +1,7 @@
-package irene.web;
+package irene.common;
 
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ResponseDetail<T> {
